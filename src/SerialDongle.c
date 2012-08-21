@@ -46,9 +46,9 @@ void APL_TaskHandler(void)
   switch(stateApp)
     {
     case INIT_STATE:
-      InitUsart();
+      init_usart();
       startVisualizer();
-      sendDataUsart("Iniciando\n", strlen("Iniciando\n"));
+      send_data_usart("Iniciando\n", strlen("Iniciando\n"));
       networkDescriptor.endpoint = LANIA_ENDPOINT;
       networkDescriptor.AppProfileId = LANIA_PROFILE_ID;
       networkDescriptor.AppDeviceId = LANIA_DEVICE_ID;
@@ -83,7 +83,7 @@ void APL_TaskHandler(void)
       else
         {
           // Send data 
-          sendDataUsart("Red error\n", 10);
+          send_data_usart("Red error\n", 10);
         }
       break;
     case STOP_STATE:
@@ -132,7 +132,7 @@ void getChildrenAddr()
   uint16_t actualNumberChildren = neighborTable[0].shortAddr;
   char x[10];
   sprintf(x, "%x", actualNumberChildren);
-  sendDataUsart(&actualNumberChildren, 2);
+  send_data_usart(&actualNumberChildren, 2);
 }
 
 
@@ -143,7 +143,7 @@ void getRssiLqi(){
   ZDO_GetLqiRssi(&getrl);
   char x[50];
   sprintf(x, "SD Lqi, %d, Rssi, %d, Nd lqi, %d, Rssi, %d\n", getrl.lqi, getrl.rssi, laniaMessage->lqi, laniaMessage->rssi);
-  sendDataUsart(x, strlen(x));
+  send_data_usart(x, strlen(x));
   showAirTxStop();
 }
 
