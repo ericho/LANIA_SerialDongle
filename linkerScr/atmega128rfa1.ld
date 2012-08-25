@@ -17,6 +17,16 @@ SECTIONS
     *(.vectors)
     KEEP(*(.vectors))
 
+    /* Non-volatile file system PDS_FF section */
+    PROVIDE(__pds_ff_start = .);
+    KEEP(*(.pds_ff))
+    PROVIDE(__pds_ff_end = .);
+
+    /* Non-volatile file system PDS_FD section */
+    PROVIDE(__pds_fd_start = .);
+    KEEP(*(.pds_fd))
+    PROVIDE(__pds_fd_end = .);
+
     *(.progmem.gcc*)
     *(.progmem*)
     . = ALIGN(2);

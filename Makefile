@@ -66,8 +66,13 @@ LIBS = \
 
 
 SRCS = \
+  $(BITCLOUD_PATH)/Components/PersistDataServer/src/pdsMem.c \
   $(BITCLOUD_PATH)/Components/PersistDataServer/src/pdsWriteData.c \
   $(BITCLOUD_PATH)/Components/PersistDataServer/src/pdsDataServer.c \
+  $(BITCLOUD_PATH)/Components/PersistDataServer/src/pdsInit.c \
+  $(BITCLOUD_PATH)/Components/PersistDataServer/src/pdsTimer.c \
+  $(BITCLOUD_PATH)/Components/PersistDataServer/src/pdsEvents.c \
+  $(BITCLOUD_PATH)/Components/PersistDataServer/src/pdsMemAccess.c \
   $(BITCLOUD_PATH)/Components/PersistDataServer/src/pdsCrcService.c \
   $(BITCLOUD_PATH)/Components/HAL/drivers/USBFIFO/src/usbFifoVirtualUsart.c \
   $(BITCLOUD_PATH)/Components/HAL/drivers/USBFIFO/src/usbFifoFT245RL.c \
