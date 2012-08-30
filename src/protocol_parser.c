@@ -123,8 +123,8 @@ void move_first_to_execute(void)
         if(first_execute_list == NULL && last_execute_list == NULL)
         {
             ptr_tmp = first_to_read;
-            ptr_tmp->next_command = NULL;
             first_to_read = first_to_read->next_command;
+			ptr_tmp->next_command = NULL;
             first_execute_list = ptr_tmp;
             last_execute_list = ptr_tmp;
             commands_on_recv_list--;
@@ -139,6 +139,71 @@ void move_first_to_execute(void)
             commands_on_recv_list--;
         }
     }
+}
+
+/**
+ * Moves the first element on executed list to output list
+ * 
+ */ 
+
+void move_executed_to_output(void)
+{
+	s_data_command *ptr_tmp;
+	if(first_execute_list != NULL)
+	{
+		if(first_execute_list == NULL && last_output_list == NULL)
+		{
+			ptr_tmp = first_execute_list;
+			first_execute_list = first_execute_list->next_command;
+			ptr_tmp->next_command = NULL;
+			first_output_list = ptr_tmp;
+			last_output_list = ptr_tmp;
+		}
+		else
+		{
+			ptr_tmp = first_execute_list;
+			first_execute_list = first_execute_list->next_command;
+			ptr_tmp->next_command = NULL;
+			last_output_list->next_command = ptr_tmp;
+			last_output_list = ptr_tmp;
+		}
+	}
+}
+
+/**
+ * Send first element on output list
+ */
+
+void send_first_output(void)
+{
+	s_data_command *ptr_tmp;
+	
+	if (first_output_list != NULL)
+	{
+		// Create memory space 4 bytes + data_length
+		// Copy byte by byte 
+		// send througth usart
+		uint16_t length_tmp;
+		uint16_t total_message_length;
+		total_message_length = 6 + first_output_list->data_length;
+		ptr_output_data = (uint8_t *)malloc(sizeof(uint8_t)*total_message_length);
+		*ptr_output_data = HEADER_TO_COMPUTER;
+		*(total_message_length - 1) = FOOTER_TO_COMPUTER;
+		*(ptr_output_data + 1) = (uint8_t) total_message_length >> 8;
+		*(ptr_output_data + 2) = (uint8_t) (total_message_length & 0x00ff);
+		*(ptr_output_data + 3) = first_output_list->id_message;
+		*(ptr_output_data + 4) = first_output_list->command;
+		if (first_output_list->data_length > 0)
+		{
+			for (int i=5; i<total_message_length - 1; i++)
+			{
+				*(ptr_output_data + i) = *(first_output_list->data + i - 5);
+			}
+		}
+		ptr_tmp = first_output_list;
+		first_output_list = first_output_list->next_command;
+		free(ptr_tmp);
+	}
 }
 
 /**

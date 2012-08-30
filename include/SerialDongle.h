@@ -29,7 +29,7 @@ typedef enum
     IN_NETWORK_STATE,
     ANALIZE_MESSAGE_STATE,
     PROCESS_MESSAGE,      
-    STUPID_STATE,
+    SENDING_MESSAGE_STATE,
     STOP_STATE
   }AppState_t;
 
@@ -72,6 +72,7 @@ bool new_data_on_buffer;
 char str[100];
 uint8_t commands_on_recv_list;
 bool executing_command;
+uint8_t *ptr_output_data;
 
 s_data_command *first_to_read;
 s_data_command *last_to_read;

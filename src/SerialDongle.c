@@ -103,13 +103,12 @@ void APL_TaskHandler(void)
             executing_command = true;
             move_first_to_execute();
             // Execute command !!
-            
-            sprintf(str, "%d", last_execute_list->command);
-            send_data_usart(str, strlen(str));
+			
+			
             stateApp = ANALIZE_MESSAGE_STATE;
             changeGlobalTask();
             break;
-        case STUPID_STATE:
+        case SENDING_MESSAGE_STATE:
             //BSP_ToggleLed(LED_RED);
             break;
         case STOP_STATE:

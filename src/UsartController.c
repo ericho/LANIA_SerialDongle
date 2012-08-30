@@ -58,7 +58,7 @@ void init_usart(void)
     offset_rx_buffer = 0    ;
     usart_tx_busy = false;
     new_data_on_buffer = false;
-    test = true;
+//    test = true;
 }
 
 
@@ -147,4 +147,7 @@ void send_data_usart(void *data, uint8_t data_length)
     usart_tx_busy = true;
     HAL_WriteUsart(&usart_descriptor, data, data_length);
 }
+
+
+
 
