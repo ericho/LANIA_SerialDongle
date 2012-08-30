@@ -11,9 +11,11 @@
 
 void analize_data_received(void);
 void put_on_list(s_data_command *cmd);
+void send_first_output(void);
 
 void init_lists(void);
 void move_first_to_execute(void);
+void move_executed_to_output(void);
 uint16_t recv_data_len;
 
 uint8_t cmd_state;
@@ -151,7 +153,7 @@ void move_executed_to_output(void)
 	s_data_command *ptr_tmp;
 	if(first_execute_list != NULL)
 	{
-		if(first_execute_list == NULL && last_output_list == NULL)
+		if(first_output_list == NULL && last_output_list == NULL)
 		{
 			ptr_tmp = first_execute_list;
 			first_execute_list = first_execute_list->next_command;
@@ -183,12 +185,11 @@ void send_first_output(void)
 		// Create memory space 4 bytes + data_length
 		// Copy byte by byte 
 		// send througth usart
-		uint16_t length_tmp;
 		uint16_t total_message_length;
 		total_message_length = 6 + first_output_list->data_length;
 		ptr_output_data = (uint8_t *)malloc(sizeof(uint8_t)*total_message_length);
 		*ptr_output_data = HEADER_TO_COMPUTER;
-		*(total_message_length - 1) = FOOTER_TO_COMPUTER;
+		*(ptr_output_data + total_message_length - 1) = FOOTER_TO_COMPUTER;
 		*(ptr_output_data + 1) = (uint8_t) total_message_length >> 8;
 		*(ptr_output_data + 2) = (uint8_t) (total_message_length & 0x00ff);
 		*(ptr_output_data + 3) = first_output_list->id_message;
@@ -202,6 +203,7 @@ void send_first_output(void)
 		}
 		ptr_tmp = first_output_list;
 		first_output_list = first_output_list->next_command;
+        send_data_usart((void*)ptr_output_data, total_message_length);
 		free(ptr_tmp);
 	}
 }
