@@ -126,7 +126,10 @@ void move_first_to_execute(void)
         {
             ptr_tmp = first_to_read;
             first_to_read = first_to_read->next_command;
+			if (first_to_read == NULL)
+				last_to_read = NULL;
 			ptr_tmp->next_command = NULL;
+			
             first_execute_list = ptr_tmp;
             last_execute_list = ptr_tmp;
             commands_on_recv_list--;
@@ -135,6 +138,8 @@ void move_first_to_execute(void)
         {
             ptr_tmp = first_to_read;
             first_to_read = first_to_read->next_command;
+			if (first_to_read == NULL)
+				last_to_read = NULL;
             ptr_tmp->next_command = NULL;
             last_execute_list->next_command = ptr_tmp;
             last_execute_list = ptr_tmp;
@@ -157,6 +162,8 @@ void move_executed_to_output(void)
 		{
 			ptr_tmp = first_execute_list;
 			first_execute_list = first_execute_list->next_command;
+			if (first_execute_list == NULL)
+				last_execute_list = NULL;
 			ptr_tmp->next_command = NULL;
 			first_output_list = ptr_tmp;
 			last_output_list = ptr_tmp;
@@ -165,6 +172,8 @@ void move_executed_to_output(void)
 		{
 			ptr_tmp = first_execute_list;
 			first_execute_list = first_execute_list->next_command;
+			if (first_execute_list == NULL)
+				last_execute_list = NULL;
 			ptr_tmp->next_command = NULL;
 			last_output_list->next_command = ptr_tmp;
 			last_output_list = ptr_tmp;
@@ -179,7 +188,6 @@ void move_executed_to_output(void)
 void send_first_output(void)
 {
 	s_data_command *ptr_tmp;
-	
 	if (first_output_list != NULL)
 	{
 		// Create memory space 4 bytes + data_length
@@ -203,6 +211,8 @@ void send_first_output(void)
 		}
 		ptr_tmp = first_output_list;
 		first_output_list = first_output_list->next_command;
+		if (first_output_list == NULL)
+			last_output_list = NULL;
         send_data_usart((void*)ptr_output_data, total_message_length);
 		free(ptr_tmp);
 	}

@@ -92,15 +92,14 @@ void APL_TaskHandler(void)
             break;
 
         case ANALIZE_MESSAGE_STATE:
-            if (commands_on_recv_list > 0 && !executing_command)
+            if (first_to_read != NULL && !executing_command)
             {
-                // Print first to out
                 stateApp = PROCESS_MESSAGE;
             }
             changeGlobalTask();
             break;
         case PROCESS_MESSAGE:
-            BSP_OnLed(LED_GREEN);
+            BSP_ToggleLed(LED_GREEN);
             executing_command = true;
             move_first_to_execute();
             // Execute command !!
@@ -111,10 +110,12 @@ void APL_TaskHandler(void)
             }
             else
                 stateApp = ANALIZE_MESSAGE_STATE;
+			BSP_ToggleLed(LED_YELLOW);
+			executing_command = false;
             changeGlobalTask();
             break;
         case SENDING_MESSAGE_STATE:
-            BSP_OnLed(LED_RED);
+            BSP_ToggleLed(LED_RED);
             send_first_output();
             executing_command = false;
             stateApp = ANALIZE_MESSAGE_STATE;
