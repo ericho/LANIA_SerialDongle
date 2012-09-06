@@ -198,7 +198,7 @@ void send_first_output(void)
 		ptr_output_data = (uint8_t *)malloc(sizeof(uint8_t)*total_message_length);
 		*ptr_output_data = HEADER_TO_COMPUTER;
 		*(ptr_output_data + total_message_length - 1) = FOOTER_TO_COMPUTER;
-		*(ptr_output_data + 1) = (uint8_t) total_message_length >> 8;
+		*(ptr_output_data + 1) = (uint8_t) (total_message_length >> 8) & 0x00ff;
 		*(ptr_output_data + 2) = (uint8_t) (total_message_length & 0x00ff);
 		*(ptr_output_data + 3) = first_output_list->id_message;
 		*(ptr_output_data + 4) = first_output_list->command;

@@ -137,7 +137,7 @@
 // formed (for the coordinator) or joined (for a router or an end device). For a
 // router or an end device the parameter can equal 0 allowing them to join the
 // first suitable network that they discover.
-#define CS_EXT_PANID 0xAAAAAAAAAAAAAAABLL
+#define CS_EXT_PANID 0xAAAAAAAAAAAAAAAALL
 
 // 64-bit Unique Identifier (UID) determining the device extended address. If this
 // value is 0 stack will try to read hardware UID from external UID or EEPROM chip.
@@ -181,14 +181,14 @@
 // example, if the parameter is set to 0 on all routers, then the coordinator will
 // be the only device that can have children and the network will have star
 // topology.
-#define CS_MAX_CHILDREN_AMOUNT 8
+#define CS_MAX_CHILDREN_AMOUNT 12
 
 // The maximum number of routers among the direct children of the device
 // 
 //  The parameter determines how many routers the device can have as children. Note
 // that the maximum number of end devices is equal to CS_MAX_CHILDREN_AMOUNT -
 // CS_MAX_CHILDREN_ROUTER_AMOUNT.
-#define CS_MAX_CHILDREN_ROUTER_AMOUNT 2
+#define CS_MAX_CHILDREN_ROUTER_AMOUNT 0
 
 // End device sleep period given in milliseconds.
 // 
@@ -364,7 +364,7 @@
 //  The parameter determines the size of the neighbor table which is used to store
 // beacon responses from nearby devices. The parameter puts an upper bound over the
 // amount of child devices possible for the node.
-#define CS_NEIB_TABLE_SIZE 8
+#define CS_NEIB_TABLE_SIZE 12
 
 // Maximum amount of records in the network Route Table.
 // 
@@ -374,7 +374,7 @@
 // the current node to a given destination node. The table is being filled
 // automatically during route discovery. An entry is added when a route is
 // discovered.
-#define CS_ROUTE_TABLE_SIZE 10
+#define CS_ROUTE_TABLE_SIZE 1
 
 // Maximum amount of records in the network Address Map Table.
 // 

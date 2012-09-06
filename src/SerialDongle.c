@@ -15,6 +15,7 @@ static ZDO_StartNetworkConf_t *confInfo;
 static DeviceType_t deviceType;
 SimpleDescriptor_t networkDescriptor;
 
+
 static laniaTest_t  *laniaMessage;
 static uint8_t lqiNode;
 static int8_t rssiNode;
@@ -80,7 +81,7 @@ void APL_TaskHandler(void)
                 // Send usart data 
                 // getChildrenAddr();          
                 showStartedNwk();
-                
+                nwk_pan_id = confInfo->PANId;
             }
             else
             {
@@ -184,7 +185,7 @@ void getRssiLqi(){
     ZDO_GetLqiRssi(&getrl);
     char x[50];
     sprintf(x, "SD Lqi, %d, Rssi, %d, Nd lqi, %d, Rssi, %d\n", getrl.lqi, getrl.rssi, laniaMessage->lqi, laniaMessage->rssi);
-    send_data_usart(x, strlen(x));
+//    send_data_usart(x, strlen(x));
     showAirTxStop();
 }
 
