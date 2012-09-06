@@ -101,16 +101,19 @@ void APL_TaskHandler(void)
         case PROCESS_MESSAGE:
             BSP_ToggleLed(LED_GREEN);
             executing_command = true;
-            move_first_to_execute();
-            // Execute command !!
-			move_executed_to_output();
-            if (first_output_list != NULL)
-            {
-                stateApp = SENDING_MESSAGE_STATE;
-            }
-            else
-                stateApp = ANALIZE_MESSAGE_STATE;
-			BSP_ToggleLed(LED_YELLOW);
+			move_first_to_execute();
+			if (parse_command(first_execute_list))
+			{
+				move_executed_to_output();
+            	if (first_output_list != NULL)
+            	{
+                	stateApp = SENDING_MESSAGE_STATE;
+            	}
+			}
+			else
+			{
+				stateApp = ANALIZE_MESSAGE_STATE;
+			}
 			executing_command = false;
             changeGlobalTask();
             break;
