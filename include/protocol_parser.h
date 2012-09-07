@@ -20,5 +20,10 @@
 #define FOOTER_TO_COMPUTER 0xCC
 
 
+#define WRONG_HEADER		0x50
+#define INCORRECT_MSG_SIZE	0x51
+#define DUPLICATED_MSG_ID	0x52
+#define WRONG_FOOTER		0x53
+#define ACK_MSG				0x54
 
 

@@ -16,8 +16,11 @@ void send_first_output(void);
 void init_lists(void);
 void move_first_to_execute(void);
 void move_executed_to_output(void);
-uint16_t recv_data_len;
+void create_response_message(uint8_t msg);
+void put_on_output_list(s_data_command *cmd);
+bool check_id_duplicated(uint8_t msg_id);
 
+uint16_t recv_data_len;
 uint8_t cmd_state;
 
 
@@ -53,7 +56,7 @@ void analize_data_received(void)
                     else
                     {
                         // Wrong length
-                        
+                        create_response_message(INCORRECT_MSG_SIZE);
                         flush_app_buffer();
                         cmd_state = WAIT_FOR_CMD_STATE;
                     }
@@ -62,6 +65,7 @@ void analize_data_received(void)
                 else
                 {
                     // Invalid header. Flush buffer, pull error message.
+					create_response_message(WRONG_HEADER);
                     flush_app_buffer();
                     cmd_state = WAIT_FOR_CMD_STATE;
                 }
@@ -95,14 +99,24 @@ void analize_data_received(void)
                         {
                             data_command->data = NULL;
                         }
-                        recv_data_len = 0;
+						recv_data_len = 0;
                         flush_app_buffer();
                         cmd_state = WAIT_FOR_CMD_STATE;
-                        put_on_list(data_command);
+                        
+						if (!check_id_duplicated(data_command->id_message))
+						{
+							recv_data_len = 0;
+                        	flush_app_buffer();
+                        	cmd_state = WAIT_FOR_CMD_STATE;
+                        	put_on_list(data_command);
+						}
+						else
+							create_response_message(DUPLICATED_MSG_ID);
                     }
                     else
                     {
                         // Invalid footer. Flush buffer. Pull error message.
+						create_response_message(WRONG_FOOTER);
                         flush_app_buffer();
                         cmd_state = WAIT_FOR_CMD_STATE;
                     }
@@ -252,5 +266,91 @@ void put_on_list(s_data_command *cmd)
     }
 }
 
+/**
+ * Creates an output message for different events like errors and acks
+ * @param msg The message identifier
+ */ 
+void create_response_message(uint8_t msg)
+{
+	s_data_command *tmp_msg;
+	tmp_msg = (s_data_command *) malloc (sizeof(s_data_command));
+	tmp_msg->id_message = 0;
+	tmp_msg->data_length = 0;
+	tmp_msg->data = NULL;
+	tmp_msg->next_command = NULL;
 
+	switch (msg)
+	{
+		case WRONG_HEADER:
+			tmp_msg->command = WRONG_HEADER;
+			break;
+			
+		case INCORRECT_MSG_SIZE:
+			tmp_msg->command = INCORRECT_MSG_SIZE;
+			break;
+
+		case DUPLICATED_MSG_ID:
+			tmp_msg->command = DUPLICATED_MSG_ID;
+			break;
+
+		case WRONG_FOOTER:
+			tmp_msg->command = WRONG_FOOTER;
+			break;
+
+		case ACK_MSG:
+			tmp_msg->command = ACK_MSG;
+			break;
+
+		default:
+			free(tmp_msg);
+			tmp_msg = NULL;
+			break;
+	}
+
+
+	if (tmp_msg != NULL)
+	{
+		put_on_output_list(tmp_msg);
+	}
+}
+
+/**
+ * Puts a output message on output list
+ * @param *cmd The pointer to the message structure.
+ */ 
+
+void put_on_output_list(s_data_command *cmd)
+{
+	if (first_output_list == NULL && last_output_list == NULL)
+	{
+		first_output_list = last_output_list = cmd;
+	}
+	else
+	{
+		last_output_list->next_command = cmd;
+		last_output_list = cmd;
+	}
+}
+
+
+/**
+ * Checks if exists a message id
+ */ 
+
+bool check_id_duplicated(uint8_t msg_id)
+{
+	s_data_command *ptr;
+	if (first_to_read != NULL)
+	{
+		ptr = first_to_read;
+		do
+		{
+			if (ptr->id_message == msg_id)
+				return true;
+			ptr = ptr->next_command;
+		}while(ptr != NULL);
+	}
+	else
+		return false;
+}
 

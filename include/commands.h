@@ -14,11 +14,6 @@
 #define READ_PULSE 			0x0A
 
 // Message definitions
-#define WRONG_HEADER		0x50
-#define INCORRECT_MSG_SIZE	0x51
-#define DUPLICATED_MSG_ID	0x52
-#define WRONG_FOOTER		0x53
-#define ACK_MSG				0x54
 #define UNKNOWN_COMMAND 	0x55
 #define BAD_PARAMETERS		0x56
 #define DEVICE_UP			0x57

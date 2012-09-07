@@ -13,8 +13,7 @@ bool device_state(s_data_command *cmd);
 bool get_network_status(s_data_command *cmd);
 bool get_children_amount(s_data_command *cmd);
 bool get_children_list(s_data_command *cmd);
-bool get_children_table_list(s_data_command *cmd);
-void get_network_address();
+bool get_lqi_rssi(s_data_command *cmd);
 
 /**
  * Receive a s_data_command and execute the specified command. 
@@ -43,7 +42,7 @@ bool parse_command(s_data_command *cmd)
 			break;
 
 		case GET_LQI_RSSI:
-			sync_response = true;
+			sync_response = get_lqi_rssi(cmd);
 			break;
 
 		case SEND_DATA_NODE:
@@ -71,8 +70,9 @@ bool parse_command(s_data_command *cmd)
 			sync_response = true;
 			break;
 
-		return sync_response;
+		
 	}
+	return sync_response;
 }
 
 /**
@@ -131,6 +131,7 @@ bool get_network_status(s_data_command *cmd)
 
 /**
  * Get number of children directly connected to the device
+ * @param *cmd A pointer to a s_data_command structure to store results. 
  */ 
 
 bool get_children_amount(s_data_command *cmd)
@@ -149,6 +150,11 @@ bool get_children_amount(s_data_command *cmd)
     }
     return true;
 }
+
+/**
+ * Get short address list of end devices in the network
+ * @param *cmd Pointer to a s_data_command structure to save the results
+ */ 
 
 bool get_children_list(s_data_command *cmd)
 {
@@ -171,24 +177,34 @@ bool get_children_list(s_data_command *cmd)
         }
         cmd->data_length = sizeof(uint16_t)*children.childrenCount + 1;
     }
+	else
+		cmd->command = BAD_PARAMETERS;
     return true;
 }
 
 
-bool get_children_table_list(s_data_command *cmd)
+/**
+ * Get Lqi and RSSI values of the node with the address specified in the s_data_command
+ * structure. The result is store in the same structure. 
+ */ 
+bool get_lqi_rssi(s_data_command *cmd)
 {
-    if (cmd->data_length == 0)
-    {
-        ZDO_Neib_t neighbor_table[CS_NEIB_TABLE_SIZE];
-
-        ZDO_GetNeibTable(&neighbor_table);
-        sprintf(str, "%d", neighbor_table[0].shortAddr);
-        send_data_usart(str, strlen(str));
-    }
-}
-
-void get_network_address()
-{
-    sprintf(str, "%d", nwk_pan_id);
-    send_data_usart(str, strlen(str));
+	if (cmd->data_length == 2) // Espected two bytes for node short address
+	{
+		
+		ZDO_GetLqiRssi_t lqi_rssi_req;
+		lqi_rssi_req.nodeAddr = (uint16_t) *(cmd->data) << 8;
+		lqi_rssi_req.nodeAddr |= (uint8_t) *(cmd->data + 1);
+		ZDO_GetLqiRssi(&lqi_rssi_req);
+		free(cmd->data); // Old data
+		cmd->data = (uint8_t *) malloc (sizeof(uint8_t) * 4); // short address + lqi + rssi
+		*(cmd->data) = (uint8_t) (lqi_rssi_req.nodeAddr >> 8) & 0x00ff;
+		*(cmd->data + 1) = (uint8_t) (lqi_rssi_req.nodeAddr & 0x00ff);
+		*(cmd->data + 2) = (uint8_t) (lqi_rssi_req.lqi);
+		*(cmd->data + 3) = (uint8_t) (lqi_rssi_req.rssi);
+		cmd->data_length = 4;
+	}
+	else
+		cmd->command = BAD_PARAMETERS;
+	return true;
 }

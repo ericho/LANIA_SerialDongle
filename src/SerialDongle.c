@@ -97,6 +97,10 @@ void APL_TaskHandler(void)
             {
                 stateApp = PROCESS_MESSAGE;
             }
+			else if (first_output_list != NULL)
+			{
+				stateApp = SENDING_MESSAGE_STATE;
+			}
             changeGlobalTask();
             break;
         case PROCESS_MESSAGE:

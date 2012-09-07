@@ -82,6 +82,7 @@ s_data_command *first_execute_list;
 s_data_command *last_execute_list;
 s_data_command *first_output_list;
 s_data_command *last_output_list;
+s_data_command *error_message;
 
 void startVisualizer(void);
 void showStartingNwk(void);
