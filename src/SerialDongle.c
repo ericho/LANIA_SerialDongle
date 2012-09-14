@@ -56,6 +56,7 @@ void APL_TaskHandler(void)
             networkDescriptor.AppDeviceVersion = LANIA_DEVICE_VERSION;
             showStartingNwk();
 
+            recv_activated = false;
             // Saves descriptor on endPoint. 
             endPoint.simpleDescriptor = &networkDescriptor;
             endPoint.APS_DataInd = APS_DataIndCoord;
@@ -155,12 +156,11 @@ static void ZDO_StartNetworkConf(ZDO_StartNetworkConf_t *confirmInfo)
 
 void APS_DataIndCoord(APS_DataInd_t *inData)
 {
-    // send data throught usart
-    //  sendDataUsart("Datos\n", 6);
-    //  getChildrenAddr();
-    showAirRxStart();
-    laniaMessage = (laniaTest_t  *)inData->asdu;
-    getRssiLqi();
+    if (recv_activated)
+    {
+        showAirRxStart();
+        // Process received data and push to output list. 
+    }
     showAirRxStop();
 }
 

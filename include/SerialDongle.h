@@ -73,6 +73,7 @@ char str[100];
 uint8_t commands_on_recv_list;
 bool executing_command;
 uint8_t *ptr_output_data;
+bool recv_activated;
 PanId_t nwk_pan_id;
 
 s_data_command *first_to_read;

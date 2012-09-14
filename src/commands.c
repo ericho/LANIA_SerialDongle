@@ -49,6 +49,10 @@ bool parse_command(s_data_command *cmd)
 			sync_response = false;
 			break;
 
+        case SET_RECV_MODE:
+            sync_response = set_recv_mode(cmd);
+            break;
+
 		case CONFIGURE_PIN:
 			sync_response = true;
 			break;
@@ -207,4 +211,35 @@ bool get_lqi_rssi(s_data_command *cmd)
 	else
 		cmd->command = BAD_PARAMETERS;
 	return true;
+}
+
+
+/**
+ * Set receive mode. 
+ * 0x01 : For Receiver enabled
+ * 0x02 : For Receiver disabled
+ */ 
+bool set_recv_mode(s_data_command *cmd)
+{
+    if (cmd->data_length == 1)
+    {
+        if (*cmd->data == ENABLE_DATA_RECEPTION)
+        {
+            recv_activated = true;
+            // Enviar confirmacion de comando. 
+        }
+        else if (*cmd->data == DISABLE_DATA_RECEPTION)
+        {
+            recv_activated = false;
+        }
+        else
+        {
+            cmd->command = BAD_PARAMETERS          
+        }
+    }
+    else
+    {
+        cmd->command = BAD_PARAMETERS;
+    }
+    return true;
 }
