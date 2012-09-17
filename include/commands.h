@@ -21,5 +21,8 @@
 #define DEVICE_UP			0x57
 #define IN_NETWORK_STATUS   0x58
 #define OUT_NETWORK_STATUS  0x59
+#define ENABLE_DATA_RECEPTION   0x5a
+#define DISABLE_DATA_RECEPTION  0x5b
+#define DATA_RECEPTION_CHANGED  0x5c
 
-extern bool recv_activated;
+//extern bool recv_activated;

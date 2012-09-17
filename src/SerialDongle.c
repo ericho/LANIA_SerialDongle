@@ -49,6 +49,7 @@ void APL_TaskHandler(void)
             init_usart();
             startVisualizer();
             init_lists();
+            recv_activated = false;
             send_data_usart("Iniciando\n", strlen("Iniciando\n"));
             networkDescriptor.endpoint = LANIA_ENDPOINT;
             networkDescriptor.AppProfileId = LANIA_PROFILE_ID;
@@ -158,10 +159,14 @@ void APS_DataIndCoord(APS_DataInd_t *inData)
 {
     if (recv_activated)
     {
-        showAirRxStart();
-        // Process received data and push to output list. 
+        app_message_node_t data_recv = (app_message_node_t) inData->asdu;
+        
     }
-    showAirRxStop();
+    else
+    {
+        BSP_ToggleLed(LED_RED);
+    }
+    //showAirRxStop();
 }
 
 void endFunc(void)

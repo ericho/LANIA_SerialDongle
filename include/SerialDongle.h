@@ -56,6 +56,24 @@ typedef struct s_data_command
     struct s_data_command *next_command;
 }s_data_command;
 
+// Struct of data received from nodes
+
+typedef struct
+{
+    uint8_t nodeType;
+    uint8_t tipo_tarjeta;
+    ExtAddr_t   extAddr;
+    ShortAddr_t shortAddr;
+    uint8_t     lqi;
+    int8_t      rssi;
+    uint16_t    sensor_humedad;
+    uint16_t    sensor_inclinacion;
+    uint16_t    sensor_precipitacion;
+    uint16_t    sensor_desplazamiento;
+    uint16_t    bateria;
+    uint16_t    temperatura;
+} app_message_node_t;
+
 void init_usart(void);
 void changeGlobalTask(void);
 static void ZDO_StartNetworkConf(ZDO_StartNetworkConf_t *confirmInfo);

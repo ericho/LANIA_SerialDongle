@@ -14,6 +14,7 @@ bool get_network_status(s_data_command *cmd);
 bool get_children_amount(s_data_command *cmd);
 bool get_children_list(s_data_command *cmd);
 bool get_lqi_rssi(s_data_command *cmd);
+bool set_recv_mode(s_data_command *cmd);
 
 /**
  * Receive a s_data_command and execute the specified command. 
@@ -226,15 +227,16 @@ bool set_recv_mode(s_data_command *cmd)
         if (*cmd->data == ENABLE_DATA_RECEPTION)
         {
             recv_activated = true;
-            // Enviar confirmacion de comando. 
+            *cmd->data = DATA_RECEPTION_CHANGED;
         }
         else if (*cmd->data == DISABLE_DATA_RECEPTION)
         {
             recv_activated = false;
+            *cmd->data = DATA_RECEPTION_CHANGED;
         }
         else
         {
-            cmd->command = BAD_PARAMETERS          
+            cmd->command = BAD_PARAMETERS;    
         }
     }
     else
