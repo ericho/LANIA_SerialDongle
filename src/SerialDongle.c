@@ -27,11 +27,12 @@ static ZDO_GetChildrenAddr_t children =
       .childrenTable = childrenTable,
     };
 
-static ZDO_Neib_t neighborTable[CS_NEIB_TABLE_SIZE];
+
 //static void recvBytes(uint16_t readBytesLen);
 //static void writeBytes(void);
 void endFunc(void);
 void getRssiLqi();
+static void APS_DataConf(APS_DataConf_t *confInfo);
 void getFirstShortAddr(ZDO_GetLqiRssi_t* nodo);
 /****************************************************************
 Implementation
@@ -57,6 +58,15 @@ void APL_TaskHandler(void)
             networkDescriptor.AppDeviceVersion = LANIA_DEVICE_VERSION;
             showStartingNwk();
 
+			message_params.profileId   = LANIA_PROFILE_ID;
+			message_params.dstAddrMode = APS_SHORT_ADDRESS;
+			message_params.dstEndpoint = LANIA_ENDPOINT;
+			message_params.clusterId   = CPU_TO_LE16(1);
+			message_params.srcEndpoint = networkDescriptor.endpoint;
+			message_params.txOptions.acknowledgedTransmission = 1;
+			message_params.radius      = 0x0;
+			message_params.APS_DataConf = APS_DataConf;
+			
             recv_activated = false;
             // Saves descriptor on endPoint. 
             endPoint.simpleDescriptor = &networkDescriptor;
@@ -155,11 +165,26 @@ static void ZDO_StartNetworkConf(ZDO_StartNetworkConf_t *confirmInfo)
     changeGlobalTask();
 }
 
+static void APS_DataConf(APS_DataConf_t *confInfo)
+{
+	if(confInfo->status == APS_SUCCESS_STATUS)
+	{
+		move_executed_to_output();
+		BSP_OnLed(LED_YELLOW);
+	}
+	else
+	{
+		move_executed_to_output();
+		sprintf(str, "No %x", confInfo->status);
+		send_data_usart(str, strlen(str));
+	}
+}
+
 void APS_DataIndCoord(APS_DataInd_t *inData)
 {
     if (recv_activated)
     {
-        app_message_node_t data_recv = (app_message_node_t) inData->asdu;
+        //app_message_node_t data_recv = (app_message_node_t *) inData->asdu;
         
     }
     else

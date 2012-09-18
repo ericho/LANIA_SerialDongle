@@ -14,8 +14,9 @@ bool get_network_status(s_data_command *cmd);
 bool get_children_amount(s_data_command *cmd);
 bool get_children_list(s_data_command *cmd);
 bool get_lqi_rssi(s_data_command *cmd);
+bool send_data_node(s_data_command *cmd);
 bool set_recv_mode(s_data_command *cmd);
-
+app_request_node_t message;
 /**
  * Receive a s_data_command and execute the specified command. 
  * @param *cmd s_data_command structure.
@@ -47,7 +48,7 @@ bool parse_command(s_data_command *cmd)
 			break;
 
 		case SEND_DATA_NODE:
-			sync_response = false;
+			sync_response = send_data_node(cmd);
 			break;
 
         case SET_RECV_MODE:
@@ -244,4 +245,32 @@ bool set_recv_mode(s_data_command *cmd)
         cmd->command = BAD_PARAMETERS;
     }
     return true;
+}
+
+/**
+ * Send data to a node. The structure must have the short address of destination
+ * node. 
+ */ 
+
+bool send_data_node(s_data_command *cmd)
+{
+	if (cmd->data_length > 2) // At least short address + 1 byte
+	{
+		// Llenar datos antes de enviar. 	
+		ShortAddr_t dest;
+		message.command.command = *(cmd->data + 2);
+		message.command.command = 0x01;
+		dest = (uint16_t) *(cmd->data) << 8;
+		dest |= (uint8_t) *(cmd->data + 1);
+		message_params.dstAddress.shortAddress = dest;
+		message_params.asduLength = sizeof(message.command);
+		message_params.asdu = (uint8_t *)	(&message.command);
+		APS_DataReq(&message_params);
+		return false;
+	}
+	else
+	{
+		cmd->command = BAD_PARAMETERS;
+		return true;
+	}
 }

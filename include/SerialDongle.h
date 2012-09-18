@@ -56,6 +56,23 @@ typedef struct s_data_command
     struct s_data_command *next_command;
 }s_data_command;
 
+// Struct of data to be sent to nodes
+
+typedef struct
+{
+	uint8_t command;
+	uint8_t op_mode;
+	uint8_t samples;
+	uint8_t time;
+}app_command_node_t;
+
+typedef struct
+{
+	uint8_t header[APS_ASDU_OFFSET];
+	app_command_node_t command;
+	uint8_t footer[APS_AFFIX_LENGTH - APS_ASDU_OFFSET];
+}app_request_node_t;
+
 // Struct of data received from nodes
 
 typedef struct
@@ -82,8 +99,9 @@ void APS_DataIndCoord(APS_DataInd_t *InData);
 static AppState_t stateApp = INIT_STATE;
 extern SimpleDescriptor_t networkDescriptor;
 
-uint8_t offset_rx_buffer;
 
+uint8_t offset_rx_buffer;
+ZDO_Neib_t neighborTable[CS_NEIB_TABLE_SIZE];
 uint8_t app_rx_buffer[APP_RX_BUFFER_SIZE];
 bool usart_tx_busy;
 bool new_data_on_buffer;
@@ -93,6 +111,7 @@ bool executing_command;
 uint8_t *ptr_output_data;
 bool recv_activated;
 PanId_t nwk_pan_id;
+APS_DataReq_t message_params;
 
 s_data_command *first_to_read;
 s_data_command *last_to_read;
