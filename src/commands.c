@@ -254,12 +254,14 @@ bool set_recv_mode(s_data_command *cmd)
 
 bool send_data_node(s_data_command *cmd)
 {
-	if (cmd->data_length > 2) // At least short address + 1 byte
+	if (cmd->data_length == 6) // At least short address + 1 byte
 	{
 		// Llenar datos antes de enviar. 	
 		ShortAddr_t dest;
 		message.command.command = *(cmd->data + 2);
-		message.command.command = 0x01;
+        message.command.op_mode = *(cmd->data + 3);
+        message.command.samples = *(cmd->data + 4);
+        message.command.time    = *(cmd->data + 5);
 		dest = (uint16_t) *(cmd->data) << 8;
 		dest |= (uint8_t) *(cmd->data + 1);
 		message_params.dstAddress.shortAddress = dest;
