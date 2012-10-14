@@ -11,9 +11,14 @@
 #define DATA_FROM_NODE      0x07
 #define SET_RECV_MODE       0x08
 #define CONFIGURE_PIN 		0x09
-#define READ_PIN 			0x0A
-#define READ_ANALOG 		0x0B
-#define READ_PULSE 			0x0C
+#define SET_NODE_OP_MODE	0x0A
+#define START_SLEEP_NODE	0x0B
+#define START_RF_NODE		0x0C
+#define REQUEST_DATA_NODE	0x0D
+#define READ_SENSORS		0x0E
+#define READ_PIN 			0x0F
+#define READ_ANALOG 		0x10
+#define READ_PULSE 			0x11
 
 // Message definitions
 #define UNKNOWN_COMMAND 	0x55

@@ -55,6 +55,18 @@ bool parse_command(s_data_command *cmd)
             sync_response = set_recv_mode(cmd);
             break;
 
+		case SET_NODE_OP_MODE:
+			break;
+
+		case START_SLEEP_NODE:
+			break;
+
+		case START_RF_NODE:
+			break;
+
+		case REQUEST_DATA_NODE:
+			break;
+			
 		case CONFIGURE_PIN:
 			sync_response = true;
 			break;
@@ -196,8 +208,7 @@ bool get_children_list(s_data_command *cmd)
 bool get_lqi_rssi(s_data_command *cmd)
 {
 	if (cmd->data_length == 2) // Espected two bytes for node short address
-	{
-		
+	{	
 		ZDO_GetLqiRssi_t lqi_rssi_req;
 		lqi_rssi_req.nodeAddr = (uint16_t) *(cmd->data) << 8;
 		lqi_rssi_req.nodeAddr |= (uint8_t) *(cmd->data + 1);
@@ -256,8 +267,10 @@ bool send_data_node(s_data_command *cmd)
 {
 	if (cmd->data_length == 6) // At least short address + 1 byte
 	{
-		// Llenar datos antes de enviar. 	
+		// Fill data before send 	
 		ShortAddr_t dest;
+		// Verificar la longitud de los datos, puede haber errores 
+		// al extraer datos de cmd->data
 		message.command.command = *(cmd->data + 2);
         message.command.op_mode = *(cmd->data + 3);
         message.command.samples = *(cmd->data + 4);

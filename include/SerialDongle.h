@@ -121,6 +121,10 @@ s_data_command *last_execute_list;
 s_data_command *first_output_list;
 s_data_command *last_output_list;
 s_data_command *error_message;
+s_data_command *received_from_node;
+
+app_message_node_t *data_from_node;
+uint8_t *serialize_from_node;
 
 void startVisualizer(void);
 void showStartingNwk(void);
@@ -131,3 +135,5 @@ void showSerialTx(void);
 void showAirRxStart(void);
 void stopVisualizer(void);
 void stopVisualizer(void);
+
+#define DATA_FROM_NODE 0x07

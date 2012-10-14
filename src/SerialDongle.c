@@ -60,7 +60,8 @@ void APL_TaskHandler(void)
 
 			message_params.profileId   = LANIA_PROFILE_ID;
 			message_params.dstAddrMode = APS_SHORT_ADDRESS;
-			message_params.dstEndpoint = LANIA_ENDPOINT;
+			//message_params.dstEndpoint = LANIA_ENDPOINT;
+			message_params.dstEndpoint = APS_BROADCAST_ENDPOINT;
 			message_params.clusterId   = CPU_TO_LE16(1);
 			message_params.srcEndpoint = networkDescriptor.endpoint;
 			message_params.txOptions.acknowledgedTransmission = 1;
@@ -184,14 +185,43 @@ void APS_DataIndCoord(APS_DataInd_t *inData)
 {
     if (recv_activated)
     {
-        //app_message_node_t data_recv = (app_message_node_t *) inData->asdu;
-        
+        app_message_node_t *data_recv = (app_message_node_t *) inData->asdu;
+        received_from_node = (s_data_command *) malloc(sizeof(s_data_command));
+		received_from_node->id_message = 0;
+		received_from_node->command = DATA_FROM_NODE;	
+		received_from_node->data_length = 17;//sizeof(app_message_node_t);
+		received_from_node->next_command = NULL;
+		received_from_node->data = (uint8_t *) malloc(sizeof(uint8_t) * 17);
+		serialize_message_node(received_from_node->data, data_recv);
+		put_on_output_list(received_from_node);
     }
     else
     {
         BSP_ToggleLed(LED_RED);
     }
     //showAirRxStop();
+}
+
+void serialize_message_node(uint8_t *dest, app_message_node_t *orig)
+{
+	//dest = (uint8_t *) malloc(sizeof(uint8_t)*17);
+	*(dest) = orig->tipo_tarjeta;
+	*(dest + 1) = (uint8_t) (orig->shortAddr >> 8) & 0x00ff;
+	*(dest + 2) = (uint8_t) (orig->shortAddr & 0x00ff);
+	*(dest + 3) = orig->lqi;
+	*(dest + 4) = (uint8_t) orig->rssi;
+	*(dest + 5) = (uint8_t) (orig->sensor_humedad >> 8) & 0x00ff;
+	*(dest + 6) = (uint8_t) (orig->sensor_humedad & 0x00ff);
+	*(dest + 7) = (uint8_t) (orig->sensor_inclinacion >> 8) & 0x00ff;
+	*(dest + 8) = (uint8_t) (orig->sensor_inclinacion & 0x00ff);
+	*(dest + 9) = (uint8_t) (orig->sensor_precipitacion >> 8) & 0x00ff;
+	*(dest + 10) = (uint8_t) (orig->sensor_precipitacion & 0x00ff);
+	*(dest + 11) = (uint8_t) (orig->sensor_desplazamiento >> 8) & 0x00ff;
+	*(dest + 12) = (uint8_t) (orig->sensor_desplazamiento & 0x00ff);
+	*(dest + 13) = (uint8_t) (orig->bateria >> 8) & 0x00ff;
+	*(dest + 14) = (uint8_t) (orig->bateria & 0x00ff);
+	*(dest + 15) = (uint8_t) (orig->temperatura >> 8) & 0x00ff;
+	*(dest + 16) = (uint8_t) (orig->temperatura & 0x00ff);
 }
 
 void endFunc(void)
